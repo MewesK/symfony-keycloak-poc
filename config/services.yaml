@@ -4,6 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    keycloak.auth_url: 'http://localhost:8080/auth'
+    keycloak.realm: 'master'
+    keycloak.client_id: 'symfony'
+    keycloak.client_secret: 'ec761710-d8ec-4d2c-812f-f453ec317525'
 
 services:
     # default configuration for services in *this* file
@@ -23,5 +27,13 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\OAuth2\Client\Provider\KeycloakFactory:
+
+    App\OAuth2\Client\Provider\Keycloak:
+        factory: ['@App\OAuth2\Client\Provider\KeycloakFactory', 'createFromUrl']
+        arguments:
+            - '%keycloak.auth_url%'
+            - '%keycloak.realm%'
+            - '%keycloak.client_id%'
+            - '%keycloak.client_secret%'
+            - 'keycloak_connect'
